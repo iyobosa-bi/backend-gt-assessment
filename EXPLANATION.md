@@ -28,7 +28,7 @@ Routes: Maps HTTP endpoints to the correct controller methods. Keeps route defin
 
 This structure improves readability, maintainability, and scalability, which is important for interview evaluation.
 
-### Assumptions I made
+### 3. Assumptions I made
 
 Users are identified by userId passed in the request body (no authentication system implemented for this exercise).
 
@@ -38,7 +38,7 @@ A task can be unassigned by setting assignedTo to NULL, assuming the column allo
 
 All dates (createdAt) are stored in UTC for consistency.
 
-### What I would improve if given more time
+### 4. What I would improve if given more time
 
 Implement a proper authentication and authorization system (e.g., JWT) instead of passing userId in the request body.
 
@@ -48,7 +48,7 @@ Add input validation middleware using a library like Joi or express-validator.
 
 Include logging for errors and activity for better monitoring.
 
-5. Tools or AI assistance used
+### 5. Tools or AI assistance used
 
 Built mainly using Node.js, Express, and MySQL.
 
