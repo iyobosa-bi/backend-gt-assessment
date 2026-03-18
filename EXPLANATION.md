@@ -1,10 +1,6 @@
-
-
-
 ## Explanations
 
-
-###  1. How I approached the implementation
+### 1. How I approached the implementation
 
 I first chose Node.js with Express since it is the language I am most familiar with.
 
@@ -56,7 +52,4 @@ VS Code for development.
 
 Used Postman for testing endpoints.
 
-Consulted AI (ChatGPT) for guidance on structure, error handling, and endpoint implementation patterns.
-
-
-
+Consulted AI (ChatGPT) for guidance on structure, error handling, and endpoint implementation patterns
