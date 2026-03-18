@@ -1,8 +1,6 @@
 # Task 3 – Basic System Thinking
 
-## 1. Scaling – What breaks when we get thousands of requests/min?
-
-These are the things that usually start crying first:
+## 1. Scaling
 
 - **Database turns into a traffic jam**  
   Too much requests will make the database execute multiple queries at a time leading to slow queries or deadlock.
@@ -19,17 +17,11 @@ These are the things that usually start crying first:
 ## 2. Performance Improvements
 
 - **Fix stock with optimistic locking**  
-  Add a version/timestamp on the product row. When updating stock:  
-  `UPDATE products SET stock = stock - :qty, version = version + 1 WHERE id = :id AND version = :old_version`  
-  If zero rows updated → someone else grabbed it first → return “sorry, sold out” or let user retry.
+  Add a version/timestamp on the product row.
 
 - **Cache the stuff you read a lot**  
    Store data in Redis/memcached for 30–120 sec for a more easier retrieval insteading of queries hitting the database repeatedly
   Invalidate or update cache when stock changes.
-
-- **Move slow non-critical work out of the request**  
-  After saving the order → fire-and-forget to a queue: send email, push notification, analytics, loyalty points update.  
-  Use something like RabbitMQ, Redis Streams, or AWS SQS. User gets “Order placed!” instantly.
 
 - **Make the API stateless & scale horizontally**  
   Multiple pods/containers behind a load balancer.  
