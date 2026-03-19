@@ -20,7 +20,7 @@ export const handleCreateTask = async (req, res) => {
 
     sendSuccessResponse(res, newTask, "Task created successfully", 201);
   } catch (e) {
-    sendErrorResponse(res, e.message, "Failed to create task", 400);
+    sendErrorResponse(res, e.message, "Failed to create task", e.statusCode || 500);
   }
 };
 
@@ -31,7 +31,7 @@ export const handleFetchTasks = async (req, res) => {
     const tasks = await fetchTasks();
     sendSuccessResponse(res, tasks, "Tasks fetched successfully", 200);
   } catch (e) {
-    sendErrorResponse(res, e.message, "Failed to fetch tasks", 500);
+    sendErrorResponse(res, e.message, "Failed to fetch tasks", e.statusCode || 500);
   }
 };
 
@@ -45,7 +45,7 @@ export const handleUpdateTask = async (req, res) => {
 
     sendSuccessResponse(res, updatedTask, "Task updated successfully", 200);
   } catch (e) {
-    sendErrorResponse(res, e.message, "Failed to update task", 400);
+    sendErrorResponse(res, e.message, "Failed to update task", e.statusCode || 500);
   }
 };
 
@@ -66,7 +66,7 @@ export const handleUpdateTaskAssigneeStatus = async (req, res) => {
       200,
     );
   } catch (e) {
-    sendErrorResponse(res, e.message, "Failed to update task status", 400);
+    sendErrorResponse(res, e.message, "Failed to update task status", e.statusCode || 500);
   }
 };
 
@@ -81,7 +81,7 @@ export const handleUnassignTask = async (req, res) => {
       sendSuccessResponse(res, null, "Task unassigned successfully", 200);
     }
   } catch (e) {
-    sendErrorResponse(res, e.message, "Failed to unassign task", 500);
+    sendErrorResponse(res, e.message, "Failed to unassign task", e.statusCode || 500);
   }
 };
 

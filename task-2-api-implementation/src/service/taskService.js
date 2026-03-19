@@ -26,11 +26,11 @@ export const createTask = async (taskInfo) => {
 
   // validate for required fields and priority values
   if (!title || !priority || !assignedTo || !assignedBy) {
-    throw new Error("All fields are required.");
+    throw new AppError("All fields are required.", 400);
   }
 
   if (!validPriorities.includes(priority.toLowerCase())) {
-    throw new Error("Priority must be  low, medium, high.");
+    throw new AppError("Priority must be one of: low, medium, high.", 400);
   }
 
   try {
@@ -42,7 +42,7 @@ export const createTask = async (taskInfo) => {
     });
     return newTask;
   } catch (e) {
-    throw new Error("Failed to create task: " + e.message);
+    throw new AppError("Failed to create task: " + e.message, 500);
   }
 };
 
@@ -51,7 +51,7 @@ export const fetchTasks = async () => {
     const tasks = await getAllTasks();
     return tasks;
   } catch (e) {
-    throw new Error("Failed to fetch tasks: " + e.message);
+    throw new AppError("Failed to fetch tasks: " + e.message, 500);
   }
 };
 
@@ -61,32 +61,31 @@ export const updateTask = async (taskId, updateData, currentUserId) => {
   const { title, priority } = updateData;
 
   if (!currentUserId) {
-    throw new Error(
-      "Invalid Credentials: User ID is required for authorization",
-    );
-  }
+    throw new AppError("Invalid Credentials: User ID is required for authorization", 401);
+  } 
+
+  
 
   const existingTask = await fetchTaskById(taskId);
   if (!existingTask) {
-    throw new Error("Task not found");
+    throw new AppError("Task not found", 404);
   }
 
   if (existingTask.assignedBy !== currentUserId) {
-    throw new Error(
-      "Authorization Error: Only the user who created the task can update it",
-    );
+    
+    throw new AppError("Authorization Error: Only the user who created the task can update it", 403);
   }
 
   if (!title && !priority) {
-    throw new Error("All fields must be provided");
+    throw new AppError("All fields must be provided", 400);
   }
 
   if (priority && !validPriorities.includes(priority.toLowerCase())) {
-    throw new Error("Priority must be one of: low, medium, high");
+    throw new AppError("Priority must be one of: low, medium, high", 400);
   }
 
   if (typeof title !== "string" || typeof priority !== "string") {
-    throw new Error("A Validation Error Occured");
+    throw new AppError("A Validation Error Occured", 400);
   }
 
   const updatedTitle = title;
@@ -102,7 +101,9 @@ export const updateTask = async (taskId, updateData, currentUserId) => {
     title: updatedTitle,
     priority: updatedPriority,
   };
-};
+
+}
+
 
 const validStatuses = ["pending", "in-progress", "completed"];
 
@@ -125,22 +126,21 @@ export const assigneeTaskStatusUpdate = async (
   }
 
   if (task.assignedTo !== currentUserId) {
-    throw new Error(
-      "Authorization Error: Only the user assigned to the task can update its status",
-    );
+
+    throw new AppError("Authorization Error: Only the user assigned to the task can update its status", 403);
   }
 
   if (!status) {
-    throw new Error("All fields are required.");
+    throw new AppError("All fields are required.", 400);
   }
 
   if (!validStatuses.includes(status.toLowerCase())) {
-    throw new Error("Status must be one of: pending, in-progress, completed");
+    throw new AppError("Status must be one of: pending, in-progress, completed", 400);
   }
 
   //checking for passing the same status as the current status
   if (task.status === status) {
-    throw new Error(`Task is already marked as ${status}`);
+    throw new AppError(`Task is already marked as ${status}`, 400);
   }
 
   await updateTaskStatus(taskId, status);
@@ -156,16 +156,16 @@ export const assigneeTaskStatusUpdate = async (
 export const unassignTaskService = async (taskId, currentUserId) => {
   const task = await fetchTaskById(taskId);
   if (!task) {
-    throw new Error("Task not found");
+    throw new AppError("Task not found", 404);
   }
 
   if (task.assignedBy !== currentUserId) {
-    throw new Error("Only the assigner can unassign this task");
+    throw new AppError("Only the assigner can unassign this task", 403);
   }
 
   const updated = await unassignTask(taskId);
   if (!updated) {
-    throw new Error("Failed to unassign task");
+    throw new AppError("Failed to unassign task", 500);
   }
 
   return true;
@@ -183,7 +183,7 @@ export const deleteTaskByAssigner = async (taskId, userId) => {
   if (task.assignedBy !== userId) {
     throw new AppError("Only the assigner can delete this task", 403);
   }
-
+  
   const deletedTask = await deleteTask(taskId);
   return true;
 };
